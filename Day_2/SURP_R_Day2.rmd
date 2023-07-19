@@ -1,0 +1,186 @@
+---
+title: "SURP_R_Workshop_Day2"
+author: "Tess Cherlin"
+date: "2023-07-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###################################
+# 1.2 Get to know the data
+###################################
+# Read in the data
+```{r}
+# Read in the two files
+dat_1 = read.csv("RNAseq_Data_1.csv")
+dat_2 = read.csv("RNAseq_Data_2.csv")
+
+# Look at the head() of each data set
+head(dat_1)
+head(dat_2)
+```
+
+# Let's look at the dimensions and column names of the data
+```{r}
+# This function tells you the number of rows and columns
+dim(dat_1)
+
+# The function prints the names of each of the columns
+colnames(dat_1)
+```
+###################################
+# 2.3 Try out different tables
+##################################
+# Summary function
+```{r}
+# Summarize Sample BC_1_RPKM in dat_1
+summary(dat_1$BC_1_fpkm)
+
+# Summarize the Gene Length in dat_1
+
+```
+
+# Table
+```{r}
+# Count the number of chromosomes are represented in the data
+table(dat_1$Chrom)
+
+# Count the number of gene types
+table(dat_1$GeneType)
+```
+# Summarize
+```{r}
+# Load the appropriate packages that are not built into R
+library(dplyr)
+
+# Summarize the gene length by chromosome
+summary_data <- dat_1 %>%
+  group_by(Chrom) %>%
+  summarise(mean_geneLength = mean(GeneLength), sum_geneLength = sum(GeneLength))
+
+summary_data
+
+
+# Summarize the gene length by GeneType
+summary_data <- dat_1 %>%
+  group_by(GeneType) %>%
+  summarise(mean_geneLength = mean(GeneLength), sum_geneLength = sum(GeneLength))
+
+summary_data
+```
+
+# Join both dat_1 and dat_2 tables together
+```{r}
+# Join data using left_join()
+dat_joined_left = left_join(dat_1, dat_2, by = c("geneID","GeneName","Chrom","Strand", "Start","End","GeneLength", "GeneType", "GeneDescription"))
+
+# Join data using inner_join()
+dat_joined_inner = inner_join(dat_1, dat_2, by = c("geneID","GeneName","Chrom","Strand", "Start","End","GeneLength", "GeneType", "GeneDescription"))
+
+# Look at the column names of the data dat_joined_inner
+colnames(dat_joined_inner)
+# Reorganize data so GeneType and GeneDescripton is at the end of the table
+dat_joined_inner = dat_joined_inner[,c(1:13,16:21,14:15)]
+
+head(dat_joined_inner)
+```
+# Put it all together
+```{r}
+# Make a new dataset
+dat_new = dat_joined_inner
+
+# Calculate the mean of experiment BC
+dat_new$BC_fpkm_average = rowMeans(dat_new[,c(8:10)])
+
+# Calculate the standard deviation of BC using the apply() function
+dat_new$BC_fpkm_sd = apply(dat_new[,c(8:10)], 1, sd)
+
+# Calculate the mean of experiment BC_DOX
+# Calculate the standard deviation of BC_DOX
+# Calculate the mean of experiment DL
+# Calculate the standard deviation of DL
+# Calculate the mean of experiment DL_DOX
+# Calculate the standard deviation of DL_DOX
+
+head(dat_new)
+```
+
+# Now save your data to a csv file and download it to your local computer
+```{r}
+write.csv(dat_new, "my_analysis.csv")
+```
+
+###################################
+# STEP 3 GGPLOT
+###################################
+
+```{r}
+# Load the tidyverse library
+library(tidyverse)
+# Load the ggplot2 library
+library(ggplot2)
+
+# Create a sample data frame
+data <- data.frame(
+  Group = rep(c("A", "B", "C", "D"), each = 20),
+  Value = rnorm(80)
+)
+
+# Create the boxplot
+ggplot(data, aes(x = Group, y = Value)) +
+  geom_boxplot() +
+  xlab("Group") +
+  ylab("Value") +
+  ggtitle("Boxplot of Values by Group")
+```
+
+# Read in GAPDH data
+```{r}
+Genes = read.csv("Genes_FPKM.csv")
+
+head(Genes)
+```
+
+# Create GAPDH boxplot
+```{r}
+# Load the ggplot2 library
+library(ggplot2)
+
+# Add color pallete
+install.packages('palettetown')
+library(palettetown)
+# https://github.com/timcdlucas/palettetown
+
+# Make colors!
+my_colors <- pokepal(pokemon = 137, spread = 4)
+
+
+# Create the boxplot
+ggplot(Genes, aes(x = Experiment.Group, y = GAPDH_FPKM, fill = Experiment.Group)) +
+  geom_boxplot() +
+  xlab("Group") +
+  ylab("GAPDH_FPKM") +
+  scale_fill_manual(values = my_colors) +
+  ggtitle("FPKM of GAPDH")
+```
+
+# Create H19 boxplot
+```{r}
+# Load the ggplot2 library
+library(ggplot2)
+
+# Add color pallete
+install.packages('palettetown')
+library(palettetown)
+# https://github.com/timcdlucas/palettetown
+
+# Make colors!
+
+
+
+# Create the boxplot
+
+```
