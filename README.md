@@ -3,3 +3,5 @@ Included in this repository are all of the materials needed for the SURP R Works
 Day 1
 Day 2
 Day 3
+
+Start by watching the video from Day 1. It will show you how to download files from github and get started!
